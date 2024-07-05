@@ -81,8 +81,8 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
     @Test
     public void maybe() {
         Mono<String> result = maybe_service()
+                .defaultIfEmpty("no results");
                 //todo: change this line only
-                ;
 
         StepVerifier.create(result)
                     .expectNext("no results")
