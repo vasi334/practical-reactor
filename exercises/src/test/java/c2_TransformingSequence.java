@@ -96,8 +96,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
     @Test
     public void sequence_sum() {
         //todo: change code as you need
-        Mono<Integer> sum = null;
-        numerical_service();
+        Mono<Integer> sum = numerical_service().reduce((a, b) -> a + b);
 
         //don't change code below
         StepVerifier.create(sum)
@@ -111,7 +110,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
      */
     @Test
     public void sum_each_successive() {
-        Flux<Integer> sumEach = numerical_service()
+        Flux<Integer> sumEach = numerical_service().scan(Integer::sum);
                 //todo: do your changes here
                 ;
 
@@ -129,7 +128,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
      */
     @Test
     public void sequence_starts_with_zero() {
-        Flux<Integer> result = numerical_service()
+        Flux<Integer> result = numerical_service().startWith(0)
                 //todo: change this line only
                 ;
 
