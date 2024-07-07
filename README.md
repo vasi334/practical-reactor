@@ -72,8 +72,3 @@ It will help me to keep this workshop up to date and add new chapters and exerci
 
 
 Created with :heart: by [schananas](https://twitter.com/91stefan_)
-
-## Note to myself
-- completed c1
-- completed c2
-- completed c3
