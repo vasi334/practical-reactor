@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Signal;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
@@ -95,9 +96,8 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
     public void successfully_executed() {
         AtomicBoolean completed = new AtomicBoolean(false);
 
-        Flux<Integer> temperatureFlux = room_temperature_service()
+        Flux<Integer> temperatureFlux = room_temperature_service().doOnComplete(() -> completed.getAndSet(true))
                 //todo: change this line only
-                //AICI AM RAMAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 ;
 
         StepVerifier.create(temperatureFlux.skip(20))
@@ -115,7 +115,7 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
     public void need_to_cancel() {
         AtomicBoolean canceled = new AtomicBoolean(false);
 
-        Flux<Integer> temperatureFlux = room_temperature_service()
+        Flux<Integer> temperatureFlux = room_temperature_service().doOnCancel(() -> canceled.getAndSet(true))
                 //todo: change this line only
                 ;
 
@@ -135,7 +135,7 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
     public void terminator() {
         AtomicInteger hooksTriggeredCounter = new AtomicInteger(0);
 
-        Flux<Integer> temperatureFlux = room_temperature_service()
+        Flux<Integer> temperatureFlux = room_temperature_service().doOnTerminate(() -> hooksTriggeredCounter.addAndGet(1))
                 //todo: change this line only
                 ;
 
@@ -163,7 +163,7 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
     public void one_to_catch_them_all() {
         AtomicInteger hooksTriggeredCounter = new AtomicInteger(0);
 
-        Flux<Integer> temperatureFlux = room_temperature_service()
+        Flux<Integer> temperatureFlux = room_temperature_service().doFinally(signalType -> hooksTriggeredCounter.addAndGet(1))
                 //todo: change this line only
                 ;
 
@@ -196,7 +196,7 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
                                  .doFirst(() -> sideEffects.add("one"));
 
         List<String> orderOfExecution =
-                Arrays.asList("todo", "todo", "todo"); //todo: change this line only
+                Arrays.asList("one", "two", "three"); //todo: change this line only
 
         StepVerifier.create(just)
                     .expectNext(true)
@@ -219,7 +219,15 @@ public class c4_LifecycleHooks extends LifecycleHooksBase {
     public void one_to_rule_them_all() {
         CopyOnWriteArrayList<String> signals = new CopyOnWriteArrayList<>();
 
-        Flux<Integer> flux = Flux.just(1, 2, 3)
+        Flux<Integer> flux = Flux.just(1, 2, 3).doOnEach(signal -> {
+            if (signal.isOnNext()){
+                signals.add("ON_NEXT");
+            } else if (signal.isOnComplete()) {
+                signals.add("ON_COMPLETE");
+            } else {
+                signals.add("ON_ERROR");
+            }
+        })
                 //todo: change this line only
                 ;
 
